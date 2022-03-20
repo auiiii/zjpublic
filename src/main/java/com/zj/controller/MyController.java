@@ -1,12 +1,23 @@
 package com.zj.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zj.dao.Book;
+import com.zj.service.MyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class MyController {
+
+    @Autowired
+    private MyService service;
 
 
     @RequestMapping(path = "/test")
@@ -64,4 +75,20 @@ public class MyController {
     {
         return "redirect:/hello";
     }
+
+
+    @RequestMapping(path = "book-list")
+    @ResponseBody
+    public String getBookList(@RequestParam(value = "id",required = false) Integer id)
+    {
+        //mvc默认不支持返回对象的
+        if(null == id)
+        {
+            return JSONObject.toJSONString(service.getBookList());
+        }
+        List<Book> list = new ArrayList<>();
+        list.add(service.getBookById(id));
+        return JSONObject.toJSONString(list);
+    }
+
 }
